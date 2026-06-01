@@ -3,64 +3,68 @@ import { store } from "../store/store";
 import { setUser } from "../store/userSlice";
 
 class SecurityService extends EventTarget {
-    keySession: string;
-    API_URL: string;
-    user: User;
-    theAuthProvider:any;
-    constructor() {
-        super();
+  keySession: string;
+  API_URL: string;
+  user: User;
 
-        this.keySession = 'session';
-        this.API_URL = import.meta.env.VITE_API_URL || ""; // Reemplaza con la URL real
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            this.user = JSON.parse(storedUser);
-        } else {
-            this.user = {}
-        }
+  constructor() {
+    super();
+    this.keySession = 'session';
+    this.API_URL = import.meta.env.VITE_API_URL || "";
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      this.user = JSON.parse(storedUser);
+    } else {
+      this.user = {}
     }
+  }
 
-    async login(user: User) {
-        console.log("llamando api " + `${this.API_URL}/login`)
-        try {
+  async login(user: User) {
+    try {
+      const response = await fetch(`${this.API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email, password: user.password }),
+      });
 
-            const response = await fetch(`${this.API_URL}/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(user),
-            });
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || 'Credenciales incorrectas');
+      }
 
-            if (!response.ok) {
-                throw new Error('Login failed');
-            }
+      const json = await response.json();
+      const userData = {
+        ...json.data.user,
+        token: json.data.access_token,
+      }
 
-            const data = await response.json();
-            localStorage.setItem("user", JSON.stringify(data));
-            store.dispatch(setUser(data));
-            return data;
-        } catch (error) {
-            console.error('Error during login:', error);
-            throw error;
-        }
+      localStorage.setItem("user", JSON.stringify(userData));
+      store.dispatch(setUser(userData));
+      return userData;
+    } catch (error) {
+      console.error('Error durante login:', error);
+      throw error;
     }
-    getUser() {
-        return this.user;
-    }
-    logout() {
-        this.user = {};
-        localStorage.removeItem("user");
-        this.dispatchEvent(new CustomEvent("userChange", { detail: null }));
-    }
+  }
 
-    isAuthenticated() {
-        return localStorage.getItem(this.keySession) !== null;
-    }
+  getUser() {
+    return this.user;
+  }
 
-    getToken() {
-        return localStorage.getItem(this.keySession);
-    }
+  logout() {
+    this.user = {};
+    localStorage.removeItem("user");
+    this.dispatchEvent(new CustomEvent("userChange", { detail: null }));
+  }
+
+  isAuthenticated() {
+    return localStorage.getItem("user") !== null;
+  }
+
+  getToken() {
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user).token : null;
+  }
 }
 
 export default new SecurityService();

@@ -1,60 +1,42 @@
-"use client"
-import React, { useState } from 'react'; // Asegúrate de importar useState
-import { User } from '../../models/user';
-import UserFormValidator from '../../components/Users/UserFormValidator'; 
-
+import React from 'react';
 import Swal from 'sweetalert2';
-import { createUser } from "../../services/userService";
+import { createStudent, createTeacher, createAdmin } from "../../services/userService";
 import Breadcrumb from '../../components/Breadcrumb';
 import { useNavigate } from "react-router-dom";
+import UserFormValidator from '../../components/Users/UserFormValidator';
 
-const App = () => {
-    const navigate = useNavigate();
+const CreateUser = () => {
+  const navigate = useNavigate();
 
-    // Estado para almacenar el usuario a editar
+  const handleCreateUser = async (values: any) => {
+    try {
+      if (values.role === 'STUDENT') await createStudent(values)
+      else if (values.role === 'TEACHER') await createTeacher(values)
+      else await createAdmin(values)
 
-    // Lógica de creación
-    const handleCreateUser = async (user: User) => {
+      Swal.fire({
+        title: "Completado",
+        text: "Usuario creado correctamente",
+        icon: "success",
+        timer: 3000
+      })
+      navigate("/usuarios");
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: "Error al crear el usuario",
+        icon: "error",
+        timer: 3000
+      })
+    }
+  };
 
-        try {
-            const createdUser = await createUser(user);
-            if (createdUser) {
-                Swal.fire({
-                    title: "Completado",
-                    text: "Se ha creado correctamente el registro",
-                    icon: "success",
-                    timer: 3000
-                })
-                console.log("Usuario creado con éxito:", createdUser);
-                navigate("/users");
-            } else {
-                Swal.fire({
-                    title: "Error",
-                    text: "Existe un problema al momento de crear el registro",
-                    icon: "error",
-                    timer: 3000
-                })
-            }
-        } catch (error) {
-            Swal.fire({
-                title: "Error",
-                text: "Existe un problema al momento de crear el registro",
-                icon: "error",
-                timer: 3000
-            })
-        }
-    };
     return (
-        <div>
-            {/* Formulario para crear un nuevo usuario */}
-            <h2>Create User</h2>
-                <Breadcrumb pageName="Crear Usuario" />
-                <UserFormValidator
-                    handleCreate={handleCreateUser}
-                    mode={1} // 1 significa creación
-                />
+        <div className="pb-10">
+        <Breadcrumb pageName="Crear Usuario" />
+        <UserFormValidator handleCreate={handleCreateUser} mode={1} />
         </div>
     );
 };
 
-export default App;
+export default CreateUser;

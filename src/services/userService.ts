@@ -1,72 +1,61 @@
-import { User } from "../models/user";
 import api from "../interceptors/axiosInterceptor";
 
-const API_URL = import.meta.env.VITE_API_URL+"/users"||""; // Reemplaza con la URL real
-
-// Obtener todos los usuarios
-export const getUsers = async (): Promise<User[]> => {
-    console.log("aqui "+API_URL)
-    try {
-        const response = await api.get("/users");
-        return await response.data;
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
+export const getUsers = async () => {
+  try {
+    const response = await api.get("/users/");
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };
 
-// Obtener un usuario por ID
-export const getUserById = async (id: number): Promise<User | null> => {
-    try {
-        const response = await fetch(`${API_URL}/${id}`);
-        if (!response.ok) throw new Error("Usuario no encontrado");
-        return await response.json();
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
+export const createStudent = async (user: any) => {
+  try {
+    const response = await api.post("/users/public/register-student", user);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
-// Crear un nuevo usuario
-export const createUser = async (user: Omit<User, "id">): Promise<User | null> => {
-    try {
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(user),
-        });
-        if (!response.ok) throw new Error("Error al crear usuario");
-        return await response.json();
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
+export const createTeacher = async (user: any) => {
+  try {
+    const response = await api.post("/users/public/register-teacher", user);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
-// Actualizar usuario
-export const updateUser = async (id: number, user: Partial<User>): Promise<User | null> => {
-    try {
-        const response = await fetch(`${API_URL}/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(user),
-        });
-        if (!response.ok) throw new Error("Error al actualizar usuario");
-        return await response.json();
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
+export const createAdmin = async (user: any) => {
+  try {
+    const response = await api.post("/auth/register-admin", user);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
-// Eliminar usuario
-export const deleteUser = async (id: number): Promise<boolean> => {
-    try {
-        const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-        if (!response.ok) throw new Error("Error al eliminar usuario");
-        return true;
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
+export const updateUser = async (id: string, user: any) => {
+  try {
+    const response = await api.put(`/users/${id}`, user);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const deactivateUser = async (id: string) => {
+  try {
+    const response = await api.patch(`/users/${id}/deactivate`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
