@@ -37,6 +37,7 @@ const UpdateRubric = lazy(() => import('../pages/Rubrics/update'));
 const EvaluationsPage = lazy(() => import('../pages/Evaluations/page'));
 const CreateEvaluation = lazy(() => import('../pages/Evaluations/create'));
 const UpdateEvaluation = lazy(() => import('../pages/Evaluations/update'));
+const GradesPage = lazy(() => import('../pages/Grades/page'));
 
 const coreRoutes = [
   {
@@ -210,6 +211,11 @@ const coreRoutes = [
   { path: '/evaluaciones/editar/:id', 
     title: 'Editar Evaluación', 
     component: UpdateEvaluation 
+  },
+  { 
+    path: '/calificaciones', 
+    title: 'Calificaciones', 
+    component: GradesPage 
   },
 
 ];
