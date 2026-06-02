@@ -13,6 +13,9 @@ const Demo= lazy(() => import('../pages/Demo'));
 const Users = lazy(() => import('../pages/Users/page'));
 const CreateUser = lazy(() => import('../pages/Users/create'));
 const UpdateUser = lazy(() => import('../pages/Users/update'));
+const CareersPage = lazy(() => import('../pages/Careers/page'));
+const CreateCareer = lazy(() => import('../pages/Careers/create'));
+const UpdateCareer = lazy(() => import('../pages/Careers/update'));
 
 const coreRoutes = [
   {
@@ -80,6 +83,15 @@ const coreRoutes = [
     title: 'Editar Usuario',
     component: UpdateUser,
   },
+  { path: '/carreras', 
+    title: 'Carreras', 
+    component: CareersPage },
+  { path: '/carreras/crear', 
+    title: 'Crear Carrera', 
+    component: CreateCareer },
+  { path: '/carreras/editar/:id', 
+    title: 'Editar Carrera', 
+    component: UpdateCareer },
 ];
 
 const routes = [...coreRoutes];
