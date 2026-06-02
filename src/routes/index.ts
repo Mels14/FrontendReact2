@@ -16,6 +16,12 @@ const UpdateUser = lazy(() => import('../pages/Users/update'));
 const CareersPage = lazy(() => import('../pages/Careers/page'));
 const CreateCareer = lazy(() => import('../pages/Careers/create'));
 const UpdateCareer = lazy(() => import('../pages/Careers/update'));
+const SemestersPage = lazy(() => import('../pages/Semesters/page'));
+const CreateSemester = lazy(() => import('../pages/Semesters/create'));
+const UpdateSemester = lazy(() => import('../pages/Semesters/update'));
+const SubjectsPage = lazy(() => import('../pages/Subjects/page'));
+const CreateSubject = lazy(() => import('../pages/Subjects/create'));
+const UpdateSubject = lazy(() => import('../pages/Subjects/update'));
 
 const coreRoutes = [
   {
@@ -92,6 +98,31 @@ const coreRoutes = [
   { path: '/carreras/editar/:id', 
     title: 'Editar Carrera', 
     component: UpdateCareer },
+  { path: '/semestres', 
+    title: 'Semestres', 
+    component: SemestersPage },
+  { path: '/semestres/crear', 
+    title: 'Crear Semestre', 
+    component: CreateSemester },
+  { path: '/semestres/editar/:id', 
+    title: 'Editar Semestre', 
+    component: UpdateSemester },
+  { 
+    path: '/asignaturas', 
+    title: 'Asignaturas', 
+    component: SubjectsPage 
+  },
+  { 
+    path: '/asignaturas/crear', 
+    title: 'Crear Asignatura', 
+    component: CreateSubject 
+  },
+  { 
+    path: '/asignaturas/editar/:id', 
+    title: 'Editar Asignatura', 
+    component: UpdateSubject 
+  },
+
 ];
 
 const routes = [...coreRoutes];
