@@ -28,6 +28,9 @@ const UpdateStudyPlan = lazy(() => import('../pages/StudyPlans/update'));
 const GroupsPage = lazy(() => import('../pages/Groups/page'));
 const CreateGroup = lazy(() => import('../pages/Groups/create'));
 const UpdateGroup = lazy(() => import('../pages/Groups/update'));
+const RegistrationsPage = lazy(() => import('../pages/Registrations/page'));
+const CreateRegistration = lazy(() => import('../pages/Registrations/create'));
+const UpdateRegistration = lazy(() => import('../pages/Registrations/update'));
 
 const coreRoutes = [
   {
@@ -157,6 +160,21 @@ const coreRoutes = [
     path: '/grupos/editar/:id', 
     title: 'Editar Grupo', 
     component: UpdateGroup },
+  { 
+    path: '/matriculas', 
+    title: 'Matrículas', 
+    component: RegistrationsPage 
+  },
+  { 
+    path: '/matriculas/crear', 
+    title: 'Crear Matrícula', 
+    component: CreateRegistration 
+  },
+  { 
+    path: '/matriculas/editar/:id', 
+    title: 'Editar Matrícula', 
+    component: UpdateRegistration
+  },
 
 ];
 
