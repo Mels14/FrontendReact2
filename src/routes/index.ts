@@ -22,6 +22,9 @@ const UpdateSemester = lazy(() => import('../pages/Semesters/update'));
 const SubjectsPage = lazy(() => import('../pages/Subjects/page'));
 const CreateSubject = lazy(() => import('../pages/Subjects/create'));
 const UpdateSubject = lazy(() => import('../pages/Subjects/update'));
+const StudyPlansPage = lazy(() => import('../pages/StudyPlans/page'));
+const CreateStudyPlan = lazy(() => import('../pages/StudyPlans/create'));
+const UpdateStudyPlan = lazy(() => import('../pages/StudyPlans/update'));
 
 const coreRoutes = [
   {
@@ -121,6 +124,21 @@ const coreRoutes = [
     path: '/asignaturas/editar/:id', 
     title: 'Editar Asignatura', 
     component: UpdateSubject 
+  },
+  { 
+    path: '/plan-estudios', 
+    title: 'Plan de Estudios', 
+    component: StudyPlansPage 
+  },
+  { 
+    path: '/plan-estudios/crear', 
+    title: 'Crear Plan', 
+    component: CreateStudyPlan 
+  },
+  { 
+    path: '/plan-estudios/editar/:id',
+    title: 'Editar Plan', 
+    component: UpdateStudyPlan 
   },
 
 ];
