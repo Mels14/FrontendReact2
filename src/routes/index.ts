@@ -12,6 +12,7 @@ const Buttons = lazy(() => import('../pages/UiElements/Buttons'));
 const Demo= lazy(() => import('../pages/Demo'));
 const Users = lazy(() => import('../pages/Users/page'));
 const CreateUser = lazy(() => import('../pages/Users/create'));
+const UpdateUser = lazy(() => import('../pages/Users/update'));
 
 const coreRoutes = [
   {
@@ -73,6 +74,11 @@ const coreRoutes = [
   path: '/usuarios/crear',
   title: 'Crear Usuario',
   component: CreateUser,
+  },
+  {
+    path: '/usuarios/editar/:id',
+    title: 'Editar Usuario',
+    component: UpdateUser,
   },
 ];
 

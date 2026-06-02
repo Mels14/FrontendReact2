@@ -2,8 +2,10 @@ import { Eye, Edit, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getUsers, deactivateUser } from "../../services/userService";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const ListUsers = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -32,6 +34,10 @@ const ListUsers = () => {
         fetchData();
       }
     });
+  };
+
+  const handleEdit = (id: string) => {
+    navigate(`/usuarios/editar/${id}`);
   };
 
   return (
@@ -68,9 +74,12 @@ const ListUsers = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 space-x-2 flex">
-                        <button className="text-yellow-600">
-                          <Edit size={20} />
-                        </button>
+                          <button 
+                            onClick={() => handleEdit(item.id)}
+                            className="text-yellow-600"
+                          >
+                            <Edit size={20} />
+                          </button>
                         <button
                           onClick={() => item.is_active && handleDeactivate(item.id)}
                           className="text-red-600"
