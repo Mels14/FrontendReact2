@@ -25,6 +25,9 @@ const UpdateSubject = lazy(() => import('../pages/Subjects/update'));
 const StudyPlansPage = lazy(() => import('../pages/StudyPlans/page'));
 const CreateStudyPlan = lazy(() => import('../pages/StudyPlans/create'));
 const UpdateStudyPlan = lazy(() => import('../pages/StudyPlans/update'));
+const GroupsPage = lazy(() => import('../pages/Groups/page'));
+const CreateGroup = lazy(() => import('../pages/Groups/create'));
+const UpdateGroup = lazy(() => import('../pages/Groups/update'));
 
 const coreRoutes = [
   {
@@ -140,6 +143,20 @@ const coreRoutes = [
     title: 'Editar Plan', 
     component: UpdateStudyPlan 
   },
+  { 
+    path: '/grupos', 
+    title: 'Grupos', 
+    component: GroupsPage
+   },
+  { 
+    path: '/grupos/crear', 
+    title: 'Crear Grupo', 
+    component: CreateGroup 
+  },
+  { 
+    path: '/grupos/editar/:id', 
+    title: 'Editar Grupo', 
+    component: UpdateGroup },
 
 ];
 
