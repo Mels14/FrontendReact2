@@ -406,6 +406,116 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Tables --> */}
 
               {/* <!-- Menu Item Settings --> */}
+              {/* <!-- Menu Item Usuarios --> */}
+              <li>
+                <NavLink
+                  to="/usuarios"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('usuarios') && 'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  Usuarios
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/carreras"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('carreras') && 'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  Carreras
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/semestres"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('semestres') && 'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  Semestres
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/asignaturas"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('asignaturas') && 'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  Asignaturas
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/plan-estudios"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('plan-estudios') && 'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  Plan de Estudios
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/grupos"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('grupos') && 'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  Grupos
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/matriculas"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('matriculas') && 'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  Matrículas
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/rubricas"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('rubricas') && 'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  Rúbricas
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/evaluaciones"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('evaluaciones') && 'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  Evaluaciones
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/calificaciones"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('calificaciones') && 'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  Calificaciones
+                </NavLink>
+              </li>
               <li>
                 <NavLink
                   to="/settings"
