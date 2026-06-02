@@ -31,6 +31,9 @@ const UpdateGroup = lazy(() => import('../pages/Groups/update'));
 const RegistrationsPage = lazy(() => import('../pages/Registrations/page'));
 const CreateRegistration = lazy(() => import('../pages/Registrations/create'));
 const UpdateRegistration = lazy(() => import('../pages/Registrations/update'));
+const RubricsPage = lazy(() => import('../pages/Rubrics/page'));
+const CreateRubric = lazy(() => import('../pages/Rubrics/create'));
+const UpdateRubric = lazy(() => import('../pages/Rubrics/update'));
 
 const coreRoutes = [
   {
@@ -174,6 +177,21 @@ const coreRoutes = [
     path: '/matriculas/editar/:id', 
     title: 'Editar Matrícula', 
     component: UpdateRegistration
+  },
+
+  { 
+    path: '/rubricas', 
+    title: 'Rúbricas', 
+    component: RubricsPage 
+  },
+  { 
+    path: '/rubricas/crear', 
+    title: 'Crear Rúbrica', 
+    component: CreateRubric 
+  },
+  { path: '/rubricas/editar/:id', 
+    title: 'Editar Rúbrica', 
+    component: UpdateRubric 
   },
 
 ];
