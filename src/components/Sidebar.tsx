@@ -818,8 +818,34 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               Sign Up
                             </NavLink>
                           </li>
+                        
                         </ul>
                       </div>
+                   {/* Links solo para estudiantes */}
+                  {user?.role === 'STUDENT' && (
+                    <>
+                      <li>
+                        <NavLink
+                          to="/mis-rubricas"
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            pathname.includes('mis-rubricas') && 'bg-graydark dark:bg-meta-4'
+                          }`}
+                        >
+                          Mis Rúbricas
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to="/mis-calificaciones"
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            pathname.includes('mis-calificaciones') && 'bg-graydark dark:bg-meta-4'
+                          }`}
+                        >
+                          Mis Calificaciones
+                        </NavLink>
+                      </li>
+                    </>
+                  )}
                       {/* <!-- Dropdown Menu End --> */}
                     </React.Fragment>
                   );

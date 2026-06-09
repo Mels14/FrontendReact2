@@ -38,6 +38,9 @@ const EvaluationsPage = lazy(() => import('../pages/Evaluations/page'));
 const CreateEvaluation = lazy(() => import('../pages/Evaluations/create'));
 const UpdateEvaluation = lazy(() => import('../pages/Evaluations/update'));
 const GradesPage = lazy(() => import('../pages/Grades/page'));
+const StudentRubricsPage = lazy(() => import('../pages/Student/rubrics'));
+const StudentGradesPage = lazy(() => import('../pages/Student/grades'));
+
 
 const coreRoutes = [
   {
@@ -217,6 +220,9 @@ const coreRoutes = [
     title: 'Calificaciones', 
     component: GradesPage 
   },
+
+{ path: '/mis-rubricas', title: 'Mis Rúbricas', component: StudentRubricsPage },
+{ path: '/mis-calificaciones', title: 'Mis Calificaciones', component: StudentGradesPage },
 
 ];
 
