@@ -92,7 +92,7 @@ const ListEvaluations = () => {
                 className="w-full border rounded-md p-2 mb-2"
               >
                 <option value="">Seleccione una rúbrica</option>
-                {rubrics.map(r => (
+                {rubrics.filter(r => r.is_public === true).map(r => (
                   <option key={r.id} value={r.id}>{r.title}</option>
                 ))}
               </select>
