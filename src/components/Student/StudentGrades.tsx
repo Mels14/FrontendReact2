@@ -5,8 +5,10 @@ import { getEvaluations } from "../../services/evaluationsService";
 import { getCriteria } from "../../services/criteriaService";
 import { getScales } from "../../services/scalesService";
 import { getGroups } from "../../services/groupsService";
+import { getUsers } from "../../services/userService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
+import { generarReporteEstudiante } from "../../utils/pdfReports";
 
 const StudentGrades = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -16,6 +18,7 @@ const StudentGrades = () => {
   const [criteria, setCriteria] = useState<any[]>([]);
   const [scales, setScales] = useState<any[]>([]);
   const [groups, setGroups] = useState<any[]>([]);
+  const [usuarios, setUsuarios] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [gradeSeleccionada, setGradeSeleccionada] = useState<any | null>(null);
 
@@ -23,13 +26,14 @@ const StudentGrades = () => {
 
   const fetchData = async () => {
     try {
-      const [grd, enr, evl, crt, scl, grp] = await Promise.all([
+      const [grd, enr, evl, crt, scl, grp, usr] = await Promise.all([
         getGrades(),
         getEnrollments(),
         getEvaluations(),
         getCriteria(),
         getScales(),
         getGroups(),
+        getUsers(),
       ]);
       setGrades(grd);
       setEnrollments(enr);
@@ -37,6 +41,7 @@ const StudentGrades = () => {
       setCriteria(crt);
       setScales(scl);
       setGroups(grp);
+      setUsuarios(usr);
     } catch (error) {
       console.error(error);
     } finally {
@@ -44,20 +49,13 @@ const StudentGrades = () => {
     }
   };
 
-  // Inscripciones del estudiante
   const misInscripciones = enrollments.filter(
     (e: any) => e.student_id === user?.id
   );
 
-  // Calificaciones del estudiante
   const misCalificaciones = grades.filter(
     (g: any) => misInscripciones.some((i: any) => i.id === g.enrollment_id)
   );
-
-  const getEvaluacion = (rubricId: string, enrollmentId: string) => {
-    const enrollment = enrollments.find(e => e.id === enrollmentId);
-    return evaluations.find(e => e.rubric_id === rubricId && e.group_id === enrollment?.group_id);
-  };
 
   const getNombreGrupo = (enrollmentId: string) => {
     const enrollment = enrollments.find(e => e.id === enrollmentId);
@@ -72,16 +70,34 @@ const StudentGrades = () => {
     return criteria.find(c => c.id === scale?.criterion_id)?.name || '-';
   };
 
+  const handleDescargarReporte = () => {
+    const estudiante = usuarios.find(u => u.profile?.id === user?.id);
+    generarReporteEstudiante(
+      estudiante,
+      misCalificaciones,
+      enrollments,
+      groups,
+      criteria,
+      scales
+    );
+  };
+
   if (loading) return <div className="p-6">Cargando...</div>;
 
   return (
     <div className="grid grid-cols-1 gap-9">
       <div className="flex flex-col gap-9">
 
-        {/* Lista de calificaciones */}
         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-          <div className="border-b border-stroke px-6.5 py-4 dark:border-strokedark">
+          <div className="border-b border-stroke px-6.5 py-4 dark:border-strokedark flex justify-between items-center">
             <h3 className="font-medium text-black dark:text-white">Mis calificaciones</h3>
+            <button
+              onClick={handleDescargarReporte}
+              style={{ backgroundColor: '#22c55e' }}
+              className="text-white px-4 py-2 rounded-md text-sm"
+            >
+              Descargar reporte PDF
+            </button>
           </div>
           <div className="p-6.5">
             {misCalificaciones.length === 0 ? (
@@ -102,7 +118,11 @@ const StudentGrades = () => {
                     <tr key={g.id} className={`border-b border-gray-200 ${gradeSeleccionada?.id === g.id ? 'bg-blue-50' : 'odd:bg-white even:bg-gray-50'}`}>
                       <td className="px-6 py-4 font-medium text-gray-900">{getNombreGrupo(g.enrollment_id)}</td>
                       <td className="px-6 py-4">{g.final_score}</td>
-                      <td className="px-6 py-4">{g.status}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 rounded-full ${g.status === 'DRAFT' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
+                          {g.status === 'DRAFT' ? 'No Definitiva' : 'Definitiva'}
+                        </span>
+                      </td>
                       <td className="px-6 py-4">{g.observations || '-'}</td>
                       <td className="px-6 py-4">
                         <button
@@ -121,17 +141,13 @@ const StudentGrades = () => {
           </div>
         </div>
 
-        {/* Detalle de calificación */}
         {gradeSeleccionada && (
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="border-b border-stroke px-6.5 py-4 dark:border-strokedark flex justify-between items-center">
               <h3 className="font-medium text-black dark:text-white">
                 Detalle — Nota final: {gradeSeleccionada.final_score}
               </h3>
-              <button
-                onClick={() => setGradeSeleccionada(null)}
-                className="text-gray-500 text-sm"
-              >
+              <button onClick={() => setGradeSeleccionada(null)} className="text-gray-500 text-sm">
                 Cerrar
               </button>
             </div>

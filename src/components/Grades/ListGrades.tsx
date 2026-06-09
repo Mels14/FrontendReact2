@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { getGrades, createOrUpdateGrade } from "../../services/gradesService";
+import { getGrades, createOrUpdateGrade, updateGrade } from "../../services/gradesService";
 import { getEnrollments, createEnrollment } from "../../services/enrollmentsService";
 import { getGroups } from "../../services/groupsService";
 import { getUsers } from "../../services/userService";
 import { getEvaluations } from "../../services/evaluationsService";
 import { getCriteria } from "../../services/criteriaService";
 import { getScales } from "../../services/scalesService";
+import { generarReporteGrupo } from "../../utils/pdfReports";
 import Swal from "sweetalert2";
 
 const ListGrades = () => {
@@ -17,6 +18,7 @@ const ListGrades = () => {
   const [criteria, setCriteria] = useState<any[]>([]);
   const [scales, setScales] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [grupoSeleccionado, setGrupoSeleccionado] = useState<any | null>(null);
 
   const [showEnrollForm, setShowEnrollForm] = useState(false);
   const [enrollData, setEnrollData] = useState({ student_id: '', group_id: '' });
@@ -123,11 +125,68 @@ const ListGrades = () => {
     }
   };
 
+  const handleConfirmarNota = async (grade: any) => {
+    Swal.fire({
+      title: "Confirmar nota",
+      text: "¿Está seguro de registrar esta nota como definitiva? Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#22c55e",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, confirmar",
+      cancelButtonText: "Cancelar"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await updateGrade(grade.id, { status: 'SENT', observations: grade.observations || '' });
+          Swal.fire("Confirmado", "La nota ha sido registrada como definitiva", "success");
+          fetchData();
+        } catch (error) {
+          Swal.fire("Error", "No se pudo confirmar la nota", "error");
+        }
+      }
+    });
+  };
+
+  const handleDescargarReporte = () => {
+    generarReporteGrupo(
+      grupoSeleccionado,
+      enrollments.filter(e => e.group_id === grupoSeleccionado?.id),
+      grades,
+      users
+    );
+  };
+
   if (loading) return <div className="p-6">Cargando...</div>;
 
   return (
     <div className="grid grid-cols-1 gap-9">
       <div className="flex flex-col gap-9">
+
+        {/* Selector de grupo para reporte */}
+        <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+          <div className="border-b border-stroke px-6.5 py-4 dark:border-strokedark">
+            <h3 className="font-medium text-black dark:text-white">Reporte por grupo</h3>
+          </div>
+          <div className="p-6 flex gap-4 items-center">
+            <select
+              value={grupoSeleccionado?.id || ''}
+              onChange={e => setGrupoSeleccionado(groups.find(g => g.id === e.target.value) || null)}
+              className="border rounded-md p-2 text-sm flex-1"
+            >
+              <option value="">Seleccione un grupo</option>
+              {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+            </select>
+            <button
+              onClick={handleDescargarReporte}
+              disabled={!grupoSeleccionado}
+              style={{ backgroundColor: grupoSeleccionado ? '#22c55e' : '#ccc' }}
+              className="text-white px-4 py-2 rounded-md text-sm"
+            >
+              Descargar reporte PDF
+            </button>
+          </div>
+        </div>
 
         {/* Inscribir estudiante */}
         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -194,9 +253,17 @@ const ListGrades = () => {
                       <tr key={en.id} className="odd:bg-white even:bg-gray-50 border-b border-gray-200">
                         <td className="px-6 py-4 font-medium text-gray-900">{getNombreEstudiante(en.student_id)}</td>
                         <td className="px-6 py-4">{getNombreGrupo(en.group_id)}</td>
-                        <td className="px-6 py-4">{en.status}</td>
-                        <td className="px-6 py-4">{grade ? grade.final_score : 'Sin calificar'}</td>
                         <td className="px-6 py-4">
+                          {grade ? (
+                            <span className={`px-2 py-1 rounded-full ${grade.status === 'DRAFT' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
+                              {grade.status === 'DRAFT' ? 'No Definitiva' : 'Definitiva'}
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 rounded-full bg-gray-100 text-gray-800">Sin calificar</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">{grade ? grade.final_score : '-'}</td>
+                        <td className="px-6 py-4 flex gap-2">
                           <button
                             onClick={() => { setCalificando(en); setEvalSeleccionada(''); setDetalles([]); setObservations(''); }}
                             style={{ backgroundColor: '#3b82f6' }}
@@ -204,6 +271,15 @@ const ListGrades = () => {
                           >
                             Calificar
                           </button>
+                          {grade && grade.status === 'DRAFT' && (
+                            <button
+                              onClick={() => handleConfirmarNota(grade)}
+                              style={{ backgroundColor: '#22c55e' }}
+                              className="py-1 px-3 text-white rounded-md text-sm"
+                            >
+                              Confirmar nota
+                            </button>
+                          )}
                         </td>
                       </tr>
                     );
