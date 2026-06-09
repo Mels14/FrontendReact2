@@ -11,11 +11,8 @@ interface MyFormProps {
 const UserFormValidator: React.FC<MyFormProps> = ({ mode, handleCreate, handleUpdate, user }) => {
 
   const handleSubmit = (values: any) => {
-    if (mode === 1 && handleCreate) {
-      handleCreate(values);
-    } else if (mode === 2 && handleUpdate) {
-      handleUpdate(values);
-    }
+    if (mode === 1 && handleCreate) handleCreate(values);
+    else if (mode === 2 && handleUpdate) handleUpdate(values);
   };
 
   return (
@@ -26,6 +23,8 @@ const UserFormValidator: React.FC<MyFormProps> = ({ mode, handleCreate, handleUp
         first_name: user.profile?.first_name || '',
         last_name: user.profile?.last_name || '',
         identification: user.profile?.identification || '',
+        phone: user.profile?.phone || '',
+        specialty: user.profile?.specialty || '',
         role: user.role || 'STUDENT',
         password: '',
       } : {
@@ -36,6 +35,8 @@ const UserFormValidator: React.FC<MyFormProps> = ({ mode, handleCreate, handleUp
         first_name: '',
         last_name: '',
         identification: '',
+        phone: '',
+        specialty: '',
       }}
       validationSchema={Yup.object({
         email: Yup.string().email("Email inválido").required("El email es obligatorio"),
@@ -44,18 +45,38 @@ const UserFormValidator: React.FC<MyFormProps> = ({ mode, handleCreate, handleUp
           : Yup.string(),
         code: Yup.string().required("El código es obligatorio"),
         role: Yup.string().required("El rol es obligatorio"),
-        first_name: Yup.string().required("El nombre es obligatorio"),
-        last_name: Yup.string().required("El apellido es obligatorio"),
+        first_name: Yup.string().when('role', {
+          is: (role: string) => role !== 'ADMIN',
+          then: (schema) => schema.required("El nombre es obligatorio"),
+          otherwise: (schema) => schema.notRequired(),
+        }),
+        last_name: Yup.string().when('role', {
+          is: (role: string) => role !== 'ADMIN',
+          then: (schema) => schema.required("El apellido es obligatorio"),
+          otherwise: (schema) => schema.notRequired(),
+        }),
         identification: Yup.string().when('role', {
           is: (role: string) => role !== 'ADMIN',
           then: (schema) => schema.required("La cédula es obligatoria"),
+          otherwise: (schema) => schema.notRequired(),
+        }),
+        phone: Yup.string().when('role', {
+          is: 'TEACHER',
+          then: (schema) => schema.required("El teléfono es obligatorio"),
+          otherwise: (schema) => schema.notRequired(),
+        }),
+        specialty: Yup.string().when('role', {
+          is: 'TEACHER',
+          then: (schema) => schema.required("La especialidad es obligatoria"),
           otherwise: (schema) => schema.notRequired(),
         }),
       })}
       onSubmit={(values) => handleSubmit(values)}
     >
       {({ handleSubmit, values }) => (
-          <Form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 p-6 bg-white rounded-md shadow-md overflow-y-auto max-h-screen">
+        <Form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 p-6 bg-white rounded-md shadow-md">
+
+          {/* Rol */}
           <div>
             <label className="block text-lg font-medium text-gray-700">Rol</label>
             <Field as="select" name="role" className="w-full border rounded-md p-2">
@@ -65,12 +86,14 @@ const UserFormValidator: React.FC<MyFormProps> = ({ mode, handleCreate, handleUp
             </Field>
           </div>
 
+          {/* Email */}
           <div>
             <label className="block text-lg font-medium text-gray-700">Email</label>
             <Field type="text" name="email" className="w-full border rounded-md p-2" />
             <ErrorMessage name="email" component="p" className="text-red-500 text-sm" />
           </div>
 
+          {/* Contraseña solo en creación */}
           {mode === 1 && (
             <div>
               <label className="block text-lg font-medium text-gray-700">Contraseña</label>
@@ -79,30 +102,51 @@ const UserFormValidator: React.FC<MyFormProps> = ({ mode, handleCreate, handleUp
             </div>
           )}
 
+          {/* Código */}
           <div>
             <label className="block text-lg font-medium text-gray-700">Código</label>
             <Field type="text" name="code" className="w-full border rounded-md p-2" />
             <ErrorMessage name="code" component="p" className="text-red-500 text-sm" />
           </div>
 
-          <div>
-            <label className="block text-lg font-medium text-gray-700">Nombre</label>
-            <Field type="text" name="first_name" className="w-full border rounded-md p-2" />
-            <ErrorMessage name="first_name" component="p" className="text-red-500 text-sm" />
-          </div>
-
-          <div>
-            <label className="block text-lg font-medium text-gray-700">Apellido</label>
-            <Field type="text" name="last_name" className="w-full border rounded-md p-2" />
-            <ErrorMessage name="last_name" component="p" className="text-red-500 text-sm" />
-          </div>
-
+          {/* Campos para STUDENT y TEACHER */}
           {values.role !== 'ADMIN' && (
-            <div>
-              <label className="block text-lg font-medium text-gray-700">Cédula</label>
-              <Field type="text" name="identification" className="w-full border rounded-md p-2" />
-              <ErrorMessage name="identification" component="p" className="text-red-500 text-sm" />
-            </div>
+            <>
+              <div>
+                <label className="block text-lg font-medium text-gray-700">Nombre</label>
+                <Field type="text" name="first_name" className="w-full border rounded-md p-2" />
+                <ErrorMessage name="first_name" component="p" className="text-red-500 text-sm" />
+              </div>
+
+              <div>
+                <label className="block text-lg font-medium text-gray-700">Apellido</label>
+                <Field type="text" name="last_name" className="w-full border rounded-md p-2" />
+                <ErrorMessage name="last_name" component="p" className="text-red-500 text-sm" />
+              </div>
+
+              <div>
+                <label className="block text-lg font-medium text-gray-700">Cédula</label>
+                <Field type="text" name="identification" className="w-full border rounded-md p-2" />
+                <ErrorMessage name="identification" component="p" className="text-red-500 text-sm" />
+              </div>
+            </>
+          )}
+
+          {/* Campos solo para TEACHER */}
+          {values.role === 'TEACHER' && (
+            <>
+              <div>
+                <label className="block text-lg font-medium text-gray-700">Teléfono</label>
+                <Field type="text" name="phone" className="w-full border rounded-md p-2" />
+                <ErrorMessage name="phone" component="p" className="text-red-500 text-sm" />
+              </div>
+
+              <div>
+                <label className="block text-lg font-medium text-gray-700">Especialidad</label>
+                <Field type="text" name="specialty" className="w-full border rounded-md p-2" />
+                <ErrorMessage name="specialty" component="p" className="text-red-500 text-sm" />
+              </div>
+            </>
           )}
 
           <div className="pb-4">

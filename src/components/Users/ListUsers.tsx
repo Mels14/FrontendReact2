@@ -1,4 +1,4 @@
-import { Eye, Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getUsers, deactivateUser } from "../../services/userService";
 import Swal from "sweetalert2";
@@ -7,15 +7,22 @@ import { useNavigate } from "react-router-dom";
 const ListUsers = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<any[]>([]);
+  const [filtroRol, setFiltroRol] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('');
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useEffect(() => { fetchData(); }, []);
 
   const fetchData = async () => {
     const users = await getUsers();
     setData(users);
   };
+
+  const datosFiltrados = data.filter(item => {
+    const cumpleRol = filtroRol ? item.role === filtroRol : true;
+    const cumpleEstado = filtroEstado === '' ? true :
+      filtroEstado === 'activo' ? item.is_active : !item.is_active;
+    return cumpleRol && cumpleEstado;
+  });
 
   const handleDeactivate = async (id: string) => {
     Swal.fire({
@@ -50,6 +57,38 @@ const ListUsers = () => {
               + Nuevo usuario
             </a>
           </div>
+
+          {/* Filtros */}
+          <div className="flex gap-4 px-6 py-4 border-b border-stroke">
+            <select
+              value={filtroRol}
+              onChange={e => setFiltroRol(e.target.value)}
+              className="border rounded-md p-2 text-sm"
+            >
+              <option value="">Todos los roles</option>
+              <option value="ADMIN">Administrador</option>
+              <option value="TEACHER">Docente</option>
+              <option value="STUDENT">Estudiante</option>
+            </select>
+
+            <select
+              value={filtroEstado}
+              onChange={e => setFiltroEstado(e.target.value)}
+              className="border rounded-md p-2 text-sm"
+            >
+              <option value="">Todos los estados</option>
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
+            </select>
+
+            <button
+              onClick={() => { setFiltroRol(''); setFiltroEstado(''); }}
+              className="border rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
+            >
+              Limpiar filtros
+            </button>
+          </div>
+
           <div className="flex flex-col gap-5.5 p-6.5">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left text-gray-500">
@@ -63,7 +102,7 @@ const ListUsers = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((item) => (
+                  {datosFiltrados.map((item) => (
                     <tr key={item.id} className="odd:bg-white even:bg-gray-50 border-b border-gray-200">
                       <td className="px-6 py-4 font-medium text-gray-900">{item.code}</td>
                       <td className="px-6 py-4">{item.email}</td>
@@ -74,12 +113,12 @@ const ListUsers = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 space-x-2 flex">
-                          <button 
-                            onClick={() => handleEdit(item.id)}
-                            className="text-yellow-600"
-                          >
-                            <Edit size={20} />
-                          </button>
+                        <button
+                          onClick={() => handleEdit(item.id)}
+                          className="text-yellow-600"
+                        >
+                          <Edit size={20} />
+                        </button>
                         <button
                           onClick={() => item.is_active && handleDeactivate(item.id)}
                           className="text-red-600"
